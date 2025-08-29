@@ -21,7 +21,20 @@ libvirt:
   image: juniper/vptx
   build: https://netlab.tools/labs/vptx/
   pre_install: vptx
-  create_template: vptx.xml.j2
+  #create_template: vptx.xml.j2
+  create: virt-install --name vm_box --nographics --import
+    --virt-type kvm
+    --os-variant linux2024
+    --memory 8128
+    --vcpus 4
+    --boot firmware=efi,firmware.feature0.enabled=no,firmware.feature0.name=secure-boot
+    --disk path=vm.qcow2,bus=virtio
+    --disk path=/tmp/vptx.bootstrap.qcow2,bus=usb,format=raw
+    --network network=default,model=virtio
+    --sysinfo bios.vendor=Bochs,bios.version=Bochs
+    --sysinfo system.manufacturer=Bochs,system.product=Bochs,system.serial=chassis_no=0:slot=0:type=1:assembly_id=0x0D20:platform=251:master=0:channelized=no
+    --sysinfo chassis.manufacturer=Bochs
+    --serial pty
 
 clab:
   image: vrnetlab/juniper_vjunosevolved:23.4R2-S2.1
