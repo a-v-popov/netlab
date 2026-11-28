@@ -4,9 +4,9 @@
 # Run netlab installation scripts
 #
 import argparse
-import csv
 import importlib
 import os
+import platform
 import shutil
 import sysconfig
 import typing
@@ -82,8 +82,9 @@ def read_config_setup() -> Box:
     setup.distro.ID = "unknown"
   else:
     try:
-      with open(os_release) as stream:
-        setup.distro = dict(csv.reader(stream, delimiter="="))
+      # Use the standard library parser: os-release files may contain blank lines,
+      # comments, and quoted/escaped values (see os-release(5))
+      setup.distro = platform.freedesktop_os_release()
     except Exception as ex:
       error_and_exit(f'Cannot read {str(os_release)}: {str(ex)}')
   return setup
